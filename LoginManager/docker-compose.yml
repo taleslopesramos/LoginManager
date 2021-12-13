@@ -1,0 +1,36 @@
+﻿version: '3.4'
+
+networks:
+  LoginManager-dev:
+    driver: bridge
+
+services:
+  LoginManager:
+    image: loginmanager:latest
+    depends_on:
+      - "postgres_image"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    environment:
+      DB_CONNECTION_STRING: "Host=postgres_image;Port=5432;Database=LoginManager;username=postgres;password=Teste123"
+    networks:
+      - LoginManager-dev
+     
+  postgres_image:
+    image: postgres:latest
+    ports:
+      - "5432"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "Teste123"
+      POSTGRES_DB: "LoginManager"
+    networks:
+      - LoginManager-dev
+volumes:
+  db_volume:    
